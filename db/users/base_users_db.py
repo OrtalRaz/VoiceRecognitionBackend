@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
+from typing import overload
 
 
 @dataclass
@@ -11,18 +12,33 @@ class User:
 
 
 class BaseUsersDB(metaclass=ABCMeta):
-    @abstractmethod
+    @overload
     def get_user(self, user_id: int) -> User:
+        ...
+
+    @overload
+    def get_user(self, username: str) -> User:
+        ...
+
+    @abstractmethod
+    def get_user(self, identifier) -> User:
         """
-        :param user_id: The ID of the user to get.
+        :param identifier: An identifier (ID/name) of the user to get.
         :return: User with given ID.
         :raises UserNotExistingException: If no user with such ID exists.
         """
         pass
 
     @abstractmethod
-    def insert_user(self, username: str, password: str, email: str) -> int:
-        pass
+    def create_user(self, username: str, password: str, email: str) -> int:
+        """
+        Insert a new user to the DB.
+        :param username: The new username.
+        :param password: New user's password.
+        :param email: New user's email.
+        :return: New user's ID.
+        :raises UserAlreadyExistsException: In case a user with such name already exists.
+        """
 
     @abstractmethod
     def delete_user(self, user_id: int):
