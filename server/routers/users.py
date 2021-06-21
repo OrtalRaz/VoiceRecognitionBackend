@@ -1,18 +1,18 @@
 import logging
-import hashlib
 
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 
+from db.db_exceptions import UserAlreadyExistsException, UserNotExistingException
 from db.user_topics import BaseUserTopicsDB
+from db.users import BaseUsersDB
 from server.dependencies import get_users_db, get_user_topics_db
 from server.models import UserModel, CreateUserModel
-from db.users import BaseUsersDB
-from db.db_exceptions import UserAlreadyExistsException, UserNotExistingException
 
 _logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
 
 @router.post('/')
 async def create_user(user: CreateUserModel,

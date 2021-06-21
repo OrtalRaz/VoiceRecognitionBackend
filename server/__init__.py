@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 
 from db.user_topics import BaseUserTopicsDB, SQLUserTopicsDB
@@ -11,6 +11,7 @@ from .routers.topics import router as topics_router
 def create_app():
     app = FastAPI()
 
+    api_router = APIRouter()
     users_db: BaseUsersDB = SQLUsersDB()
     app.state.users_db = users_db
 
@@ -30,8 +31,9 @@ def create_app():
         allow_headers=["*"],
     )
 
-    app.include_router(users_router, prefix='/users')
-    app.include_router(recordings_router, prefix='/recordings')
-    app.include_router(topics_router, prefix='/topics')
+    api_router.include_router(users_router, prefix='/users')
+    api_router.include_router(recordings_router, prefix='/recordings')
+    api_router.include_router(topics_router, prefix='/topics')
+    app.include_router(api_router, prefix='/api')
 
     return app
